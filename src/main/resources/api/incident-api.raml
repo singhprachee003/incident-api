@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: Incident API
+types:
+  Incident: !include datatypes/IncidentDataType.raml
+
+/incident:
+  post:
+    body:
+      application/json:
+        type: Incident
+    description: Creates Incident in Service Now for logging issues
+    
+    responses: 
+      200:
+        body: 
+          application/json:
+            example:
+              message: Incident created successfully on ServiceNow

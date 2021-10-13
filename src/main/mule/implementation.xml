@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:json-logger="http://www.mulesoft.org/schema/mule/json-logger" xmlns:servicenow="http://www.mulesoft.org/schema/mule/servicenow"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/servicenow http://www.mulesoft.org/schema/mule/servicenow/current/mule-servicenow.xsd
+http://www.mulesoft.org/schema/mule/json-logger http://www.mulesoft.org/schema/mule/json-logger/current/mule-json-logger.xsd">
+	<flow name="Post-ServiceNow" doc:id="eafd8fab-55fc-40b0-ae7a-97c26072d2bb" >
+		<json-logger:logger doc:name="Logger" doc:id="041d868b-8711-4990-aec1-cf2a4aae4dde" message='#["JOSN logger"]' config-ref="JSON_Logger_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="84ce63b6-7e67-44e2-9d24-e7e2bf8ae43c" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/xml
+ns inc http://www.service-now.com/incident
+---
+{
+	inc#insert:
+	{
+		"caller_id": payload.caller,
+		"short_description": payload.short_description,
+		"opened": payload.opened,
+		"closed": payload.closed,
+		"urgency": payload.urgency,
+		"state": payload.state
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<servicenow:invoke doc:name="Invoke" doc:id="1c71f015-3fec-4c42-b6b8-452b73435973" service="incident" operation="insert" config-ref="ServiceNow_Config"/>
+		<ee:transform doc:name="Transform Message" doc:id="47f60d01-6e80-4f8e-9fae-d46d10e04821" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<json-logger:logger doc:name="Logger" doc:id="f56221f7-b785-4afb-972b-ce9dd6b79ee5" message='#["JOSN logger"]' config-ref="JSON_Logger_Config"/>
+	</flow>
+</mule>

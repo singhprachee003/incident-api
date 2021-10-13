@@ -1,0 +1,9 @@
+jslogger:
+  applicationName: "sample-incident_api"
+  applicationVersion: "1.0.0-SNAPSHOT"
+  env: "SANDBOX"
+
+serviceNow:
+  userName: "admin"
+  password: "ldKBh3uHcO9H"
+  serviceAddress: "https://dev64035.service-now.com/"
