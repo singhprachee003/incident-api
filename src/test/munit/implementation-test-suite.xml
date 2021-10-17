@@ -7,25 +7,16 @@
 		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
 		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
-	<munit:config doc:name="MUnit configuration" doc:id="59d0aaf3-d348-41a1-995e-d4bc2bbb327e" >
-		<munit:parameterizations >
-			<munit:parameterization name="incident" >
-				<munit:parameters >
-					<munit:parameter propertyName="input" value="#[output application/json --- readUrl('classpath://testdata\inputincident.json')]" />
-					<munit:parameter propertyName="output" value="#[output application/json---readUrl('classpath://testdata\output.json')]" />
-				</munit:parameters>
-			</munit:parameterization>
-		</munit:parameterizations>
-	</munit:config>
-	<munit:test name="implementation-test-suite-Post-ServiceNowTest" doc:id="7acdb808-9228-44d9-8797-882ed2436821" description="Test">
-		<munit:behavior>
-			<set-payload value="${input}" doc:name="Set Payload" doc:id="fec3aeee-67ea-43d6-8c30-d650ca111b41" />
-		</munit:behavior>
+	<munit:config name="implementation-test-suite.xml" />
+	<munit:test name="implementation-test-suite-Post-ServiceNowTest" doc:id="2f7c9f3c-0819-4b65-8a91-0039f64b263f" description="Test">
 		<munit:execution >
-			<flow-ref doc:name="Flow-ref to Post-ServiceNow" doc:id="5957898f-808e-42a5-b579-9e65f05ae597" name="Post-ServiceNow"/>
+			<munit:set-event doc:name="Set Event" doc:id="0c9847ea-f592-4bc6-9219-c68a47aced97" >
+				<munit:payload value='{"caller": "Sudhas Test User", "short_description": "Mulesoft MyTrains service fail Testing with SNOW--with munit", "opened": "2021-09-28T17:32:28Z", "closed": "2021-09-28T17:32:28Z",  "urgency": "1","state": "New"}' mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to Post-ServiceNow" doc:id="d12a876c-72bc-43d6-a17a-d3febb2308f1" name="Post-ServiceNow"/>
 		</munit:execution>
-		<munit:validation>
-			<munit-tools:assert-equals doc:name="Assert equals" doc:id="38c15222-74e4-4aa0-8f75-4ebe3a4f5d60" actual="#[payload.message]" expected="${output}" message="Incident not created"/>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="73662711-5c6b-4091-bb57-3af397e8608b" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
 		</munit:validation>
 	</munit:test>
 
